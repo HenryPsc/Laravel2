@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use App\Models\Direcciones;
 use App\Models\User;
 
@@ -16,6 +18,11 @@ class UsuarioDireccionSeeder extends Seeder
      */
     public function run(): void
     {
+        // Disable foreign key checks
+        Schema::disableForeignKeyConstraints();
+        DB::table('users')->truncate();
+        Schema::enableForeignKeyConstraints();
+
         // Crear usuario admin
         $admin = User::create([
             'name' => 'Admin User',

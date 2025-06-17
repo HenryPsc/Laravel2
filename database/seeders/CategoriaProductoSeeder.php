@@ -1,63 +1,59 @@
 <?php
- 
+
 namespace Database\Seeders;
- 
+
 use Illuminate\Database\Seeder;
-use App\Models\Categoria;
-use App\Models\Producto;
- 
+use App\Models\Categoria; // Asegúrate de importar el modelo Categoria
+use App\Models\Producto;  // Asegúrate de importar el modelo Producto
+
 class CategoriaProductoSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        // Crear categorías usando firstOrCreate
-        $categorias = [
-            ['nombre' => 'Electrónica', 'slug' => 'electronica'],
-            ['nombre' => 'Ropa', 'slug' => 'ropa'],
-            ['nombre' => 'Hogar', 'slug' => 'hogar'],
-        ];
- 
-        foreach ($categorias as $catData) {
-            Categoria::firstOrCreate(
-                ['slug' => $catData['slug']],
-                $catData
-            );
+        // NO CREAR CATEGORÍAS AQUÍ - DEBEN SER CREADAS POR CategoriaSeeder
+        // NO CREAR PRODUCTOS AQUÍ - DEBEN SER CREADOS POR ProductoSeeder
+
+        // Lógica para asignar categorías a productos existentes
+        // Esto asume que ProductoSeeder y CategoriaSeeder ya se ejecutaron.
+
+        // Ejemplo: Asignar categorías a la Laptop X1
+        $laptop = Producto::where('titulo', 'Laptop X1')->first();
+        if ($laptop) {
+            $electronica = Categoria::where('nombre', 'Electrónica')->first();
+            if ($electronica) {
+                $laptop->categorias()->syncWithoutDetaching([$electronica->id]);
+            }
         }
- 
-        // Crear productos
-        $productos = [
-            [
-                'titulo' => 'Laptop X1',
-                'descripcion' => 'Laptop de alto rendimiento',
-                'precio' => 1200.50,
-                'imagen' => 'https://firebasestorage.googleapis.com/v0/b/pruebaimg-f6ce6.firebasestorage.app/o/laptop.jpg?alt=media&token=2fd049a8-5562-42ec-8689-b0bebca5ce20',
-                'stock' => 10,
-            ],
-            [
-                'titulo' => 'Camisa Casual',
-                'descripcion' => 'Camisa de algodón',
-                'precio' => 25.99,
-                'imagen' => 'https://firebasestorage.googleapis.com/v0/b/pruebaimg-f6ce6.firebasestorage.app/o/16695155-0_product_1200Wx1800H.webp?alt=media&token=5cd861a5-5a7f-4179-a5e1-b50c723617a1',
-                'stock' => 50,
-            ],
-            [
-                'titulo' => 'Sofá Moderno',
-                'descripcion' => 'Sofá de diseño cómodo',
-                'precio' => 499.99,
-                'imagen' => 'https://firebasestorage.googleapis.com/v0/b/pruebaimg-f6ce6.firebasestorage.app/o/SARA-CON-BASES-2.jpg?alt=media&token=5fa19109-84b7-4f5d-9221-974af346d314',
-                'stock' => 5,
-            ],
-        ];
- 
-        foreach ($productos as $prodData) {
-            $producto = Producto::firstOrCreate(
-                ['titulo' => $prodData['titulo']],
-                $prodData
-            );
- 
-            // Asignar categorías aleatorias
+
+        // Ejemplo: Asignar categorías a la Camisa Casual
+        $camisa = Producto::where('titulo', 'Camisa Casual')->first();
+        if ($camisa) {
+            $ropa = Categoria::where('nombre', 'Ropa')->first();
+            if ($ropa) {
+                $camisa->categorias()->syncWithoutDetaching([$ropa->id]);
+            }
+        }
+
+        // Ejemplo: Asignar categorías al Sofá Moderno
+        $sofa = Producto::where('titulo', 'Sofá Moderno')->first();
+        if ($sofa) {
+            $hogar = Categoria::where('nombre', 'Hogar')->first();
+            if ($hogar) {
+                $sofa->categorias()->syncWithoutDetaching([$hogar->id]);
+            }
+        }
+
+        // Puedes automatizar esto aún más si tienes muchos productos y categorías
+        // Por ejemplo, iterar sobre todos los productos y asignar categorías aleatorias o predefinidas
+        // Ejemplo de asignación automática de categorías aleatorias (para todos los productos):
+        $productos = Producto::all();
+        foreach ($productos as $producto) {
+            // Asignar categorías aleatorias a cada producto
             $categoriaIds = Categoria::inRandomOrder()->limit(rand(1, 2))->pluck('id')->toArray();
-            $producto->categorias()->sync($categoriaIds);
+            $producto->categorias()->syncWithoutDetaching($categoriaIds);
         }
     }
 }
